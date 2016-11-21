@@ -15,7 +15,7 @@ PARAMS=""
 OUTPUT_IMAGE="/tmp/i3lock.png"
 
 #Take screenshot:
-scrot $OUTPUT_IMAGE
+scrot -z $OUTPUT_IMAGE
 
 #Get dimensions of the lock image:
 LOCK_IMAGE_INFO=`identify $LOCK`
