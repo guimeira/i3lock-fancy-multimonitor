@@ -16,23 +16,28 @@ TEXT="$FOLDER/text.png"
 PARAMS=""
 OUTPUT_IMAGE="/tmp/i3lock.png"
 DISPLAY_TEXT=true
+PIXELATE=false
 
 # Read user input
 POSITIONAL=()
 while [[ $# -gt 0 ]]
 do
-key="$1"
+  key="$1"
 
-case $key in
-    -n|--no-text)
+  case $key in
+  -n|--no-text)
     DISPLAY_TEXT=false
     shift # past argument
     ;;
-    *)    # unknown option
+  -p|--pixelate)
+    PIXELATE=true
+    shift # past argument
+    ;;
+  *)    # unknown option
     POSITIONAL+=("$1") # save it in an array for later
     shift # past argument
     ;;
-esac
+  esac
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
@@ -77,7 +82,12 @@ do
 done <<<"`xrandr`"
 
 #Execute ImageMagick:
-PARAMS="'$OUTPUT_IMAGE' '-level' '0%,100%,0.6' '-blur' '$BLURTYPE' $PARAMS '$OUTPUT_IMAGE'"
+if $PIXELATE ; then
+  PARAMS="'$OUTPUT_IMAGE' '-scale' '10%' '-scale' '1000%' $PARAMS '$OUTPUT_IMAGE'"
+else
+  PARAMS="'$OUTPUT_IMAGE' '-level' '0%,100%,0.6' '-blur' '$BLURTYPE' $PARAMS '$OUTPUT_IMAGE'"
+fi
+
 eval convert $PARAMS
 
 #Lock the screen:
