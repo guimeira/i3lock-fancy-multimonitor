@@ -1,4 +1,6 @@
 #!/bin/bash
+
+# Defaults
 # All options are here: http://www.imagemagick.org/Usage/blur/#blur_args
 #BLURTYPE="0x5"
 #BLURTYPE="0x2"
@@ -13,6 +15,26 @@ LOCK="$FOLDER/lock.png"
 TEXT="$FOLDER/text.png"
 PARAMS=""
 OUTPUT_IMAGE="/tmp/i3lock.png"
+DISPLAY_TEXT=true
+
+# Read user input
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+key="$1"
+
+case $key in
+    -n|--no-text)
+    DISPLAY_TEXT=false
+    shift # past argument
+    ;;
+    *)    # unknown option
+    POSITIONAL+=("$1") # save it in an array for later
+    shift # past argument
+    ;;
+esac
+done
+set -- "${POSITIONAL[@]}" # restore positional parameters
 
 #Take screenshot:
 scrot -z $OUTPUT_IMAGE
@@ -23,11 +45,13 @@ LOCK_IMAGE_INFO=`identify $LOCK`
 IMAGE_WIDTH=${BASH_REMATCH[1]}
 IMAGE_HEIGHT=${BASH_REMATCH[2]}
 
-#Get dimensions of the text image:
-TEXT_IMAGE_INFO=`identify $TEXT`
-[[ $TEXT_IMAGE_INFO =~ $IMAGE_RE ]]
-TEXT_WIDTH=${BASH_REMATCH[1]}
-TEXT_HEIGHT=${BASH_REMATCH[2]}
+if $DISPLAY_TEXT ; then
+  #Get dimensions of the text image:
+  TEXT_IMAGE_INFO=`identify $TEXT`
+  [[ $TEXT_IMAGE_INFO =~ $IMAGE_RE ]]
+  TEXT_WIDTH=${BASH_REMATCH[1]}
+  TEXT_HEIGHT=${BASH_REMATCH[2]}
+fi
 
 #Execute xrandr to get information about the monitors:
 while read LINE
@@ -41,10 +65,14 @@ do
     Y=${BASH_REMATCH[4]}
     POS_X=$(($X+$WIDTH/2-$IMAGE_WIDTH/2))
     POS_Y=$(($Y+$HEIGHT/2-$IMAGE_HEIGHT/2))
-    TEXT_X=$(($X+$WIDTH/2-$TEXT_WIDTH/2))
-    TEXT_Y=$(($Y+$HEIGHT/2-$TEXT_HEIGHT/2+200))
 
-    PARAMS="$PARAMS '$LOCK' '-geometry' '+$POS_X+$POS_Y' '-composite' '$TEXT' '-geometry' '+$TEXT_X+$TEXT_Y' '-composite'"
+    PARAMS="$PARAMS '$LOCK' '-geometry' '+$POS_X+$POS_Y' '-composite'"
+
+    if $DISPLAY_TEXT ; then
+        TEXT_X=$(($X+$WIDTH/2-$TEXT_WIDTH/2))
+        TEXT_Y=$(($Y+$HEIGHT/2-$TEXT_HEIGHT/2+200))
+        PARAMS="$PARAMS '$TEXT' '-geometry' '+$TEXT_X+$TEXT_Y' '-composite'"
+    fi
   fi
 done <<<"`xrandr`"
 
