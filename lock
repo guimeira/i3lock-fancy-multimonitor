@@ -13,6 +13,7 @@ OUTPUT_IMAGE="/tmp/i3lock.png"
 DISPLAY_TEXT=true
 PIXELATE=false
 BLURTYPE="1x1"
+BACKGROUND_IMAGE=""
 
 # Read user input
 POSITIONAL=()
@@ -20,15 +21,21 @@ for i in "$@"
 do
   case $i in
   -h|--help)
-    echo "lock: Syntax: lock [-n|--no-text] [-p|--pixelate] [-b=VAL|--blur=VAL]"
+    echo "lock: Syntax: lock [-n|--no-text] [-p|--pixelate] [-b=VAL|--blur=VAL] [-bf=VAL|--background-file=VAL]"
     echo "for correct blur values, read: http://www.imagemagick.org/Usage/blur/#blur_args"
     exit
     shift
     ;;
   -b=*|--blur=*)
     VAL="${i#*=}"
-    BLURTYPE=(${VAL//=/ }) 
+    BLURTYPE=(${VAL//=/ })
     shift
+    ;;
+  -bf=*|--background-file=*)
+    VAL="${i#*=}"
+    VAL=(${VAL//=/ })
+    BACKGROUND_IMAGE="$(readlink -f $VAL)"
+    shift # past argument
     ;;
   -n|--no-text)
     DISPLAY_TEXT=false
@@ -48,8 +55,6 @@ do
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
-#Take screenshot:
-scrot -z $OUTPUT_IMAGE
 
 #Get dimensions of the lock image:
 LOCK_IMAGE_INFO=`identify $LOCK`
@@ -89,7 +94,9 @@ do
 done <<<"`xrandr`"
 
 #Execute ImageMagick:
-if $PIXELATE ; then
+if [ -n "${BACKGROUND_IMAGE}" ] ; then
+  PARAMS="'$BACKGROUND_IMAGE' $PARAMS '$OUTPUT_IMAGE'"
+elif $PIXELATE ; then
   PARAMS="'$OUTPUT_IMAGE' '-scale' '10%' '-scale' '1000%' $PARAMS '$OUTPUT_IMAGE'"
 else
   PARAMS="'$OUTPUT_IMAGE' '-level' '0%,100%,0.6' '-blur' '$BLURTYPE' $PARAMS '$OUTPUT_IMAGE'"
