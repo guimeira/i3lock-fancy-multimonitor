@@ -20,9 +20,8 @@ for i in "$@"
 do
   case $i in
   -h|--help)
-    echo "-n or --no-text: hide the 'Type password to unlock' text."
-    echo "-p or --pixelate: pixelate the background instead of blurring it. Might be faster."
-    echo "-b= or --blur= to specify the blur amount. http://www.imagemagick.org/Usage/blur/#blur_args"
+    echo "lock: Syntax: lock [-n|--no-text] [-p|--pixelate] [-b=VAL|--blur=VAL]"
+    echo "for correct blur values, read: http://www.imagemagick.org/Usage/blur/#blur_args"
     exit
     shift
     ;;
