@@ -35,3 +35,5 @@ Now reload the i3 configuration file. By default, the key binding is `$mod+Shift
 `-n` or `--no-text`: hide the "Type password to unlock" text.
 
 `-p` or `--pixelate`: pixelate the background instead of blurring it. Might be faster.
+
+`-b` or `--blur`: the blur amount. See http://www.imagemagick.org/Usage/blur/#blur_args for valid values.
