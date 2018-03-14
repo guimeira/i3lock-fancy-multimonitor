@@ -1,12 +1,7 @@
 #!/bin/bash
 
 # Defaults
-# All options are here: http://www.imagemagick.org/Usage/blur/#blur_args
-#BLURTYPE="0x5"
-#BLURTYPE="0x2"
-#BLURTYPE="5x3"
-BLURTYPE="2x8"
-#BLURTYPE="2x3"
+
 
 DISPLAY_RE="([0-9]+)x([0-9]+)\\+([0-9]+)\\+([0-9]+)"
 IMAGE_RE="([0-9]+)x([0-9]+)"
@@ -17,14 +12,24 @@ PARAMS=""
 OUTPUT_IMAGE="/tmp/i3lock.png"
 DISPLAY_TEXT=true
 PIXELATE=false
+BLURTYPE="1x1"
 
 # Read user input
 POSITIONAL=()
-while [[ $# -gt 0 ]]
+for i in "$@"
 do
-  key="$1"
-
-  case $key in
+  case $i in
+  -h|--help)
+    echo "lock: Syntax: lock [-n|--no-text] [-p|--pixelate] [-b=VAL|--blur=VAL]"
+    echo "for correct blur values, read: http://www.imagemagick.org/Usage/blur/#blur_args"
+    exit
+    shift
+    ;;
+  -b=*|--blur=*)
+    VAL="${i#*=}"
+    BLURTYPE=(${VAL//=/ }) 
+    shift
+    ;;
   -n|--no-text)
     DISPLAY_TEXT=false
     shift # past argument
@@ -34,6 +39,8 @@ do
     shift # past argument
     ;;
   *)    # unknown option
+    echo "unknown option: $i"
+    exit
     POSITIONAL+=("$1") # save it in an array for later
     shift # past argument
     ;;
