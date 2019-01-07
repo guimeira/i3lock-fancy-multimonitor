@@ -37,3 +37,5 @@ Now reload the i3 configuration file. By default, the key binding is `$mod+Shift
 `-p` or `--pixelate`: pixelate the background instead of blurring it. Might be faster.
 
 `-b` or `--blur`: the blur amount. See http://www.imagemagick.org/Usage/blur/#blur_args for valid values.
+
+`-e` or `--ignore-empty-password`: ignore enter key presses when no password is given. Same as the `-e` flag on `i3lock` itself.
