@@ -13,6 +13,7 @@ OUTPUT_IMAGE="/tmp/i3lock.png"
 DISPLAY_TEXT=true
 PIXELATE=false
 BLURTYPE="1x1"
+IGNORE_EMPTY_FLAG=""
 
 # Read user input
 POSITIONAL=()
@@ -20,14 +21,14 @@ for i in "$@"
 do
   case $i in
   -h|--help)
-    echo "lock: Syntax: lock [-n|--no-text] [-p|--pixelate] [-b=VAL|--blur=VAL]"
+    echo "lock: Syntax: lock [-n|--no-text] [-p|--pixelate] [-e|--ignore-empty-password] [-b=VAL|--blur=VAL]"
     echo "for correct blur values, read: http://www.imagemagick.org/Usage/blur/#blur_args"
     exit
     shift
     ;;
   -b=*|--blur=*)
     VAL="${i#*=}"
-    BLURTYPE=(${VAL//=/ }) 
+    BLURTYPE=(${VAL//=/ })
     shift
     ;;
   -n|--no-text)
@@ -36,6 +37,10 @@ do
     ;;
   -p|--pixelate)
     PIXELATE=true
+    shift # past argument
+    ;;
+  -e|--ignore-empty-password)
+    IGNORE_EMPTY_FLAG="-e"
     shift # past argument
     ;;
   *)    # unknown option
@@ -98,7 +103,7 @@ fi
 eval convert $PARAMS
 
 #Lock the screen:
-i3lock -i $OUTPUT_IMAGE -t
+i3lock -i $OUTPUT_IMAGE -t $IGNORE_EMPTY_FLAG
 
 #Remove the generated image:
 rm $OUTPUT_IMAGE
