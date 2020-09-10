@@ -11,17 +11,17 @@ TEXT="$FOLDER/text.png"
 PARAMS=""
 OUTPUT_IMAGE="/tmp/i3lock.png"
 DISPLAY_TEXT=true
-PIXELATE=false
+PIXELATE="1"
 BLURTYPE="1x1"
 
 # Read user input
 POSITIONAL=()
-for i in "$@"
-do
+for i in "$@"; do
   case $i in
   -h|--help)
-    echo "lock: Syntax: lock [-n|--no-text] [-p|--pixelate] [-b=VAL|--blur=VAL]"
+    echo "lock: Syntax: lock [-n|--no-text] [-p=VAL|--pixelate=VAL] [-b=VAL|--blur=VAL]"
     echo "for correct blur values, read: http://www.imagemagick.org/Usage/blur/#blur_args"
+    echo "specify --pixelate in pixels, (e.g. --pixelate=5 will result in 20% scaling)"
     exit
     shift
     ;;
@@ -34,8 +34,8 @@ do
     DISPLAY_TEXT=false
     shift # past argument
     ;;
-  -p|--pixelate)
-    PIXELATE=true
+  -p=*|--pixelate=*)
+    PIXELATE="${i#*=}"
     shift # past argument
     ;;
   *)    # unknown option
@@ -88,9 +88,14 @@ do
   fi
 done <<<"`xrandr`"
 
+#Set Scale:
+[[ "$PIXELATE" = "0" ]] && PIXELATE="1"
+SCALE1="$(( 100 / $PIXELATE ))%"
+SCALE2="$(( 100 * $PIXELATE ))%"
+
 #Execute ImageMagick:
-if $PIXELATE ; then
-  PARAMS="'$OUTPUT_IMAGE' '-scale' '10%' '-scale' '1000%' $PARAMS '$OUTPUT_IMAGE'"
+if [ ! -z "$PIXELATE" ] ; then
+  PARAMS="'$OUTPUT_IMAGE' '-scale' '$SCALE1' '-scale' '$SCALE2' $PARAMS '$OUTPUT_IMAGE'"
 else
   PARAMS="'$OUTPUT_IMAGE' '-level' '0%,100%,0.6' '-blur' '$BLURTYPE' $PARAMS '$OUTPUT_IMAGE'"
 fi
