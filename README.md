@@ -1,4 +1,5 @@
 # i3lock-fancy-multimonitor
+
 The idea for this project was shamelessly copied from [meskarune](https://github.com/meskarune)'s [i3lock-fancy](https://github.com/meskarune/i3lock-fancy).
 
 It uses [scrot](http://freecode.com/projects/scrot) to take a screenshot of the desktop, then [ImageMagick](http://www.imagemagick.org/) blurs the image and adds a lock icon and text.
@@ -8,6 +9,7 @@ By using information from [xrandr](http://www.x.org/wiki/Projects/XRandR/) and b
 The lock icon is different from the original project, with a transparent black circle around it. The text is also an image, making it easier to customize (and to put it at the correct position). Finally, it uses vanilla [i3lock](https://github.com/i3/i3lock) instead of [i3lock-color](https://github.com/eBrnd/i3lock-color). The author of i3lock-color [is not maintaining it anymore](https://github.com/eBrnd/i3lock-color/issues/6). If you want to customize the colors of i3lock, the recommended version of i3lock-color is [this one](https://github.com/Arcaena/i3lock-color), maintained by [Chris Guillott](https://github.com/Arcaena).
 
 ## Installation
+
 Make sure you have all the dependencies:
 
 ```
@@ -35,5 +37,7 @@ Now reload the i3 configuration file. By default, the key binding is `$mod+Shift
 `-n` or `--no-text`: hide the "Type password to unlock" text.
 
 `-p` or `--pixelate`: pixelate the background instead of blurring it. Might be faster.
+
+`-g` or `--gray-scale`: grayscale the background image
 
 `-b` or `--blur`: the blur amount. See http://www.imagemagick.org/Usage/blur/#blur_args for valid values.
